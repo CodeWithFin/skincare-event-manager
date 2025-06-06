@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft, User, Phone, Clock, Heart, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { addGuest } from '@/lib/firebase-service';
+import { addGuest } from '@/lib/data-service';
 import { SKIN_CONCERNS, SKINCARE_BRANDS, SkinConcern, SkincareBrand } from '@/types';
 
 export default function CheckIn() {

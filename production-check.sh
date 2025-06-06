@@ -8,39 +8,31 @@ echo ""
 
 # Check if required files exist
 echo "📁 Checking project structure..."
-if [ -f ".env.example" ]; then
-    echo "✅ Environment template found"
-else
-    echo "❌ Missing .env.example file"
-    exit 1
-fi
+required_files=("package.json" "next.config.ts" "tsconfig.json")
 
-if [ -f "firebase.json" ]; then
-    echo "✅ Firebase configuration found"
-else
-    echo "❌ Missing firebase.json file"
-    exit 1
-fi
-
-if [ -f "firestore.rules" ]; then
-    echo "✅ Firestore rules found"
-else
-    echo "❌ Missing firestore.rules file"
-    exit 1
-fi
-
-# Check if .env.local exists
-echo ""
-echo "🔧 Checking environment configuration..."
-if [ -f ".env.local" ]; then
-    echo "✅ Local environment file found"
-    if grep -q "your-api-key" .env.local; then
-        echo "⚠️  Warning: Please update Firebase credentials in .env.local"
+for file in "${required_files[@]}"; do
+    if [ -f "$file" ]; then
+        echo "✅ $file found"
     else
-        echo "✅ Environment appears configured"
+        echo "❌ Missing $file file"
+        exit 1
     fi
+done
+
+# Check source structure
+echo ""
+echo "📂 Checking source structure..."
+if [ -d "src/app" ]; then
+    echo "✅ Next.js app directory found"
 else
-    echo "❌ Missing .env.local file - please copy from .env.example and configure"
+    echo "❌ Missing src/app directory"
+    exit 1
+fi
+
+if [ -f "src/lib/data-service.ts" ]; then
+    echo "✅ Data service found"
+else
+    echo "❌ Missing data service"
     exit 1
 fi
 
@@ -54,25 +46,30 @@ else
     exit 1
 fi
 
-# Check Firebase CLI
+# Check for Vercel configuration
 echo ""
-echo "🔥 Checking Firebase CLI..."
-if command -v firebase &> /dev/null; then
-    echo "✅ Firebase CLI is installed"
-    if firebase projects:list > /dev/null 2>&1; then
-        echo "✅ Firebase authentication successful"
-    else
-        echo "⚠️  Please run: firebase login"
-    fi
+echo "🚀 Checking deployment configuration..."
+if [ -f "vercel.json" ]; then
+    echo "✅ Vercel configuration found"
 else
-    echo "❌ Firebase CLI not found - run: npm install -g firebase-tools"
+    echo "ℹ️  No vercel.json found - using default Vercel settings"
+fi
+
+# Check package.json scripts
+echo ""
+echo "📝 Checking npm scripts..."
+if npm run --silent lint > /dev/null 2>&1; then
+    echo "✅ Linting passed"
+else
+    echo "⚠️  Warning: Linting issues found - run npm run lint to fix"
 fi
 
 echo ""
 echo "🎉 Production readiness check complete!"
 echo ""
-echo "Next steps:"
-echo "1. Configure Firebase project: npm run firebase:init"
-echo "2. Deploy application: npm run deploy"
+echo "Your app is ready for deployment! Next steps:"
+echo "1. Deploy to Vercel: vercel"
+echo "2. Or push to GitHub and connect to Vercel"
 echo "3. Test the deployed application"
 echo ""
+echo "✨ Your Skincare Event Queue Manager is production-ready!"

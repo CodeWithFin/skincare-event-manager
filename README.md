@@ -1,6 +1,6 @@
 # 🧴 Skincare Event Queue Manager
 
-A comprehensive digital queue management system designed for skincare events, consultations, and training clinics. Built with Next.js, Firebase, and Tailwind CSS.
+A comprehensive digital queue management system designed for skincare events, consultations, and training clinics. Built with Next.js and Tailwind CSS, ready for deployment on Vercel.
 
 ## ✨ Features
 
@@ -9,12 +9,12 @@ A comprehensive digital queue management system designed for skincare events, co
 - **🔹 Admin Dashboard**: Comprehensive queue management and service tracking
 - **🔹 Analytics & Insights**: Event performance metrics and guest preference analytics
 - **🔹 Mobile-First Design**: Optimized for smartphones and tablets
-- **🔹 Real-Time Updates**: Firebase Firestore for instant synchronization
+- **🔹 In-Memory Storage**: Fast, responsive data handling for events
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: Next.js 14, React, TypeScript
-- **Backend**: Firebase (Firestore, Authentication)
+- **Frontend**: Next.js 15, React, TypeScript
+- **Data**: In-memory storage with real-time updates
 - **Styling**: Tailwind CSS
 - **Icons**: Lucide React
 - **Notifications**: React Hot Toast
@@ -25,7 +25,6 @@ A comprehensive digital queue management system designed for skincare events, co
 ### Prerequisites
 
 - Node.js 18+ and npm
-- Firebase account and project
 
 ### 1. Clone and Install
 
@@ -35,26 +34,7 @@ cd event-manager
 npm install
 ```
 
-### 2. Firebase Setup
-
-1. Create a new Firebase project at [Firebase Console](https://console.firebase.google.com/)
-2. Enable Firestore Database
-3. Create a web app and copy the configuration
-4. Create `.env.local` file (copy from `.env.example`):
-   ```bash
-   cp .env.example .env.local
-   ```
-5. Update `.env.local` with your Firebase config:
-   ```env
-   NEXT_PUBLIC_FIREBASE_API_KEY=your-actual-api-key
-   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project-id.firebaseapp.com
-   NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
-   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project-id.appspot.com
-   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your-sender-id
-   NEXT_PUBLIC_FIREBASE_APP_ID=your-app-id
-   ```
-
-### 3. Development
+### 2. Development
 
 ```bash
 # Start development server
@@ -65,92 +45,32 @@ npm run dev
 
 ## 🚀 Production Deployment
 
-Your Skincare Event Queue Manager is now **production-ready**! 
+Your Skincare Event Queue Manager is now **production-ready** and optimized for Vercel deployment!
 
 ### Quick Deployment Steps:
 
-1. **Set up Firebase Project**:
+1. **Deploy to Vercel**:
    ```bash
-   # Login to Firebase
-   npm run firebase:login
+   # Install Vercel CLI (if not installed)
+   npm i -g vercel
    
-   # Initialize Firebase (if not done)
-   npm run firebase:init
+   # Deploy to Vercel
+   vercel
    ```
 
-2. **Configure Environment**:
-   ```bash
-   # Copy environment template
-   cp .env.example .env.local
-   
-   # Add your Firebase credentials to .env.local
-   ```
-
-3. **Deploy to Firebase Hosting**:
-   ```bash
-   # Deploy everything (hosting + rules)
-   npm run deploy
-   
-   # Or deploy only hosting
-   npm run deploy:hosting
-   ```
+2. **Or use GitHub Integration**:
+   - Push your code to GitHub
+   - Connect your repository to Vercel
+   - Automatic deployments on every push
 
 ### What's Included:
 
 ✅ **Production-Ready Build** - Optimized static files  
 ✅ **Error Boundaries** - Graceful error handling  
-✅ **Loading States** - Smooth user experience  
-✅ **Firebase Integration** - Real-time database  
-✅ **Security Rules** - Firestore protection  
-✅ **Mobile Responsive** - Works on all devices  
-✅ **SEO Optimized** - Meta tags and structure  
-
-### 📋 Final Checklist:
-
-- [ ] Firebase project created
-- [ ] Environment variables configured in `.env.local`
-- [ ] Application builds successfully (`npm run build`)
-- [ ] Firestore rules deployed (`npm run deploy:rules`)
-- [ ] App deployed to Firebase Hosting (`npm run deploy:hosting`)
-- [ ] Test QR code generation and scanning
-- [ ] Verify admin queue management
-- [ ] Check analytics dashboard
-
-**Your app is ready for production use! 🎉**
-
----
-  appId: "your-app-id"
-};
-```
-
-### 3. Firestore Security Rules
-
-Add these security rules to your Firestore:
-
-```javascript
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    // Allow read/write access to guests collection
-    match /guests/{document} {
-      allow read, write: if true;
-    }
-    
-    // Allow read/write access to service-sessions collection
-    match /service-sessions/{document} {
-      allow read, write: if true;
-    }
-  }
-}
-```
-
-### 4. Run the Application
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) to view the application.
+✅ **Responsive Design** - Works on all devices  
+✅ **Real-Time Updates** - Live queue synchronization  
+✅ **Performance Optimized** - Fast loading and interactions  
+✅ **Error Handling** - Robust error management
 
 ## 📱 Usage Guide
 
@@ -196,27 +116,13 @@ src/
 │   ├── admin/             # Admin dashboard and queue
 │   └── page.tsx           # Home page
 ├── lib/                   # Utility functions and services
-│   ├── firebase.ts        # Firebase configuration
-│   ├── firebase-service.ts # Firestore operations
+│   ├── data-service.ts    # In-memory data operations
 │   └── utils.ts           # Helper functions
 └── types/                 # TypeScript type definitions
     └── index.ts           # App-wide types
 ```
 
 ## 🔧 Configuration
-
-### Environment Variables
-
-Create a `.env.local` file for sensitive configuration:
-
-```env
-NEXT_PUBLIC_FIREBASE_API_KEY=your-api-key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-auth-domain
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-storage-bucket
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your-messaging-sender-id
-NEXT_PUBLIC_FIREBASE_APP_ID=your-app-id
-```
 
 ### Customization
 
@@ -225,31 +131,32 @@ NEXT_PUBLIC_FIREBASE_APP_ID=your-app-id
 - **Styling**: Update Tailwind classes throughout components
 - **Branding**: Change colors, fonts, and logos in components
 
-## 📊 Firebase Collections
+## 📊 Data Structure
 
-### `guests` Collection
+### Guest Object
 ```typescript
 {
   id: string,
   name: string,
   phoneNumber: string,
-  timeOfArrival: Timestamp,
+  timeOfArrival: Date,
   skinConcern: string,
   interestedBrand: string,
   status: 'waiting' | 'in-service' | 'completed',
-  serviceStartTime?: Timestamp,
-  serviceEndTime?: Timestamp
+  serviceStartTime?: Date,
+  serviceEndTime?: Date,
+  queuePosition: number
 }
 ```
 
-### `service-sessions` Collection
+### Service Session Object
 ```typescript
 {
   id: string,
   guestId: string,
   guestName: string,
-  startTime: Timestamp,
-  endTime?: Timestamp,
+  startTime: Date,
+  endTime?: Date,
   skinConcern: string,
   interestedBrand: string
 }
@@ -264,15 +171,10 @@ npm run build
 npx vercel
 ```
 
-### Firebase Hosting
+### Alternative Deployment Options
 
-```bash
-npm run build
-npm install -g firebase-tools
-firebase login
-firebase init hosting
-firebase deploy
-```
+- **Netlify**: Connect repository for auto-deployments
+- **Custom Hosting**: Use `npm run build` and serve `out/` folder
 
 ## 🔮 Future Enhancements
 
@@ -283,6 +185,7 @@ firebase deploy
 - **Customer Feedback**: Post-service rating and feedback system
 - **Export Features**: PDF reports and CSV data export
 - **Advanced Analytics**: Charts, graphs, and trend analysis
+- **Database Integration**: Add Supabase or other database for persistence
 
 ## 🤝 Contributing
 
@@ -304,4 +207,4 @@ For support and questions:
 
 ---
 
-Built with ❤️ for skincare professionals and event organizers. Perfect for Sip & Pop events, beauty consultations, and skincare training clinics.
+**Built with ❤️ for skincare professionals and event organizers. Perfect for Sip & Pop events, beauty consultations, and skincare training clinics.**

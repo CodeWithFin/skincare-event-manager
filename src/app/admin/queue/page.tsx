@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Clock, User, Phone, Heart, Sparkles, Play, CheckCircle, Trash2, BarChart3 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { subscribeToQueue, updateGuestStatus, deleteGuest, createServiceSession } from '@/lib/firebase-service';
+import { subscribeToQueue, updateGuestStatus, deleteGuest, createServiceSession } from '@/lib/data-service';
 import { Guest } from '@/types';
 import { formatTime, cn } from '@/lib/utils';
 

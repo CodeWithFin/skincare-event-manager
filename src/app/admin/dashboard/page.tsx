@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, TrendingUp, Clock, Users, Heart, Award, RefreshCw } from 'lucide-react';
-import { calculateEventStats } from '@/lib/firebase-service';
+import { calculateEventStats } from '@/lib/data-service';
 import { EventStats } from '@/types';
 import { formatDuration } from '@/lib/utils';
 
