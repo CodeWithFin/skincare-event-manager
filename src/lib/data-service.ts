@@ -66,7 +66,7 @@ export const deleteGuest = async (guestId: string): Promise<void> => {
   }
 };
 
-// Real-time queue listener (mock)
+// Real-time queue listener with notifications
 export const subscribeToQueue = (callback: (guests: Guest[]) => void) => {
   listeners.push(callback);
   
@@ -77,6 +77,46 @@ export const subscribeToQueue = (callback: (guests: Guest[]) => void) => {
   return () => {
     listeners = listeners.filter(l => l !== callback);
   };
+};
+
+// Subscribe to specific guest updates (for notifications)
+export const subscribeToGuestUpdates = (guestId: string, callback: (guest: Guest | null) => void) => {
+  const guestListener = (allGuests: Guest[]) => {
+    const guest = allGuests.find(g => g.id === guestId);
+    callback(guest || null);
+  };
+  
+  listeners.push(guestListener);
+  
+  // Send initial data
+  const currentGuest = guests.find(g => g.id === guestId);
+  callback(currentGuest || null);
+  
+  // Return unsubscribe function
+  return () => {
+    listeners = listeners.filter(l => l !== guestListener);
+  };
+};
+
+// Get guest by ID
+export const getGuestById = async (guestId: string): Promise<Guest | null> => {
+  return guests.find(g => g.id === guestId) || null;
+};
+
+// Check if guest is next in line
+export const isGuestNext = (guestId: string): boolean => {
+  const guest = guests.find(g => g.id === guestId);
+  return guest?.queuePosition === 1 && guest?.status === 'waiting';
+};
+
+// Get estimated wait time for a guest
+export const getEstimatedWaitTime = (guestId: string): number => {
+  const guest = guests.find(g => g.id === guestId);
+  if (!guest || guest.status !== 'waiting' || !guest.queuePosition) return 0;
+  
+  // Estimate 15 minutes per person ahead in queue
+  const AVERAGE_SERVICE_TIME = 15; // minutes
+  return Math.max(0, (guest.queuePosition - 1) * AVERAGE_SERVICE_TIME);
 };
 
 // Helper functions
@@ -189,30 +229,4 @@ export const calculateEventStats = async (): Promise<EventStats> => {
   }
 };
 
-// Mock some initial data for development
-if (typeof window !== 'undefined') {
-  // Only run in browser
-  guests = [
-    {
-      id: '1',
-      name: 'Sarah Johnson',
-      phoneNumber: '+1234567890',
-      skinConcern: 'Acne',
-      interestedBrand: 'CeraVe',
-      timeOfArrival: new Date(Date.now() - 30 * 60 * 1000), // 30 minutes ago
-      status: 'waiting',
-      queuePosition: 1
-    },
-    {
-      id: '2',
-      name: 'Mike Chen',
-      phoneNumber: '+1234567891',
-      skinConcern: 'Dryness',
-      interestedBrand: 'La Roche-Posay',
-      timeOfArrival: new Date(Date.now() - 20 * 60 * 1000), // 20 minutes ago
-      status: 'in-service',
-      queuePosition: 0,
-      serviceStartTime: new Date(Date.now() - 10 * 60 * 1000)
-    }
-  ];
-}
+// Real data only - no mock data

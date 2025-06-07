@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Notification System</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 2px solid #ddd; border-radius: 8px; }
+        .success { border-color: #22c55e; background-color: #f0fdf4; }
+        .error { border-color: #ef4444; background-color: #fef2f2; }
+        .info { border-color: #3b82f6; background-color: #eff6ff; }
+        button { padding: 10px 15px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; }
+        .btn-primary { background-color: #3b82f6; color: white; }
+        .btn-success { background-color: #22c55e; color: white; }
+        .btn-warning { background-color: #f59e0b; color: white; }
+        pre { background-color: #f8f9fa; padding: 10px; border-radius: 5px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Skincare Event Queue Manager - Notification Test</h1>
+    
+    <div class="test-section info">
+        <h2>📋 Test Workflow</h2>
+        <ol>
+            <li><strong>Check-in Process:</strong> Guest visits <code>/check-in</code> → fills form → gets redirected to <code>/check-in/success?guestId=XXX</code></li>
+            <li><strong>Status Monitoring:</strong> Guest clicks "View Status" → goes to <code>/status/{guestId}</code></li>
+            <li><strong>Real-time Updates:</strong> Queue position updates automatically</li>
+            <li><strong>Notification System:</strong> Browser notifications + audio alerts when next in line</li>
+        </ol>
+    </div>
+
+    <div class="test-section" id="notification-test">
+        <h2>🔔 Notification Permission Test</h2>
+        <p>Status: <span id="permission-status">Checking...</span></p>
+        <button id="request-permission" class="btn-primary">Request Notification Permission</button>
+        <button id="test-notification" class="btn-success" disabled>Send Test Notification</button>
+    </div>
+
+    <div class="test-section" id="audio-test">
+        <h2>🔊 Audio Alert Test</h2>
+        <p>Test the notification sound that plays when a guest is next in line:</p>
+        <button id="play-sound" class="btn-warning">Play Notification Sound</button>
+    </div>
+
+    <div class="test-section" id="workflow-test">
+        <h2>🔄 Workflow Simulation</h2>
+        <p>Simulate the complete guest experience:</p>
+        <button id="simulate-checkin" class="btn-primary">1. Simulate Check-in</button>
+        <button id="simulate-status" class="btn-primary" disabled>2. View Status Page</button>
+        <button id="simulate-next" class="btn-success" disabled>3. Simulate "You're Next"</button>
+        <div id="simulation-log"></div>
+    </div>
+
+    <div class="test-section" id="results">
+        <h2>📊 Test Results</h2>
+        <div id="test-results">
+            <p>Run the tests above to see results...</p>
+        </div>
+    </div>
+
+    <script>
+        // Test notification permissions
+        function updatePermissionStatus() {
+            const status = document.getElementById('permission-status');
+            const testBtn = document.getElementById('test-notification');
+            
+            if ('Notification' in window) {
+                status.textContent = Notification.permission;
+                status.className = Notification.permission === 'granted' ? 'success' : 
+                                  Notification.permission === 'denied' ? 'error' : 'info';
+                testBtn.disabled = Notification.permission !== 'granted';
+            } else {
+                status.textContent = 'Not supported';
+                status.className = 'error';
+            }
+        }
+
+        // Request permission
+        document.getElementById('request-permission').onclick = async () => {
+            if ('Notification' in window) {
+                const permission = await Notification.requestPermission();
+                updatePermissionStatus();
+                addResult(`Notification permission: ${permission}`, permission === 'granted' ? 'success' : 'error');
+            }
+        };
+
+        // Test notification
+        document.getElementById('test-notification').onclick = () => {
+            if (Notification.permission === 'granted') {
+                new Notification('Test Notification', {
+                    body: 'You\'re next in line for your skincare consultation!',
+                    icon: '/favicon.ico',
+                    tag: 'test-notification'
+                });
+                addResult('Test notification sent successfully!', 'success');
+            }
+        };
+
+        // Test audio
+        document.getElementById('play-sound').onclick = () => {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
+                oscillator.frequency.setValueAtTime(800, audioContext.currentTime + 0.2);
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.3);
+                
+                addResult('Audio notification played successfully!', 'success');
+            } catch (error) {
+                addResult(`Audio test failed: ${error.message}`, 'error');
+            }
+        };
+
+        // Workflow simulation
+        let simulatedGuestId = null;
+
+        document.getElementById('simulate-checkin').onclick = () => {
+            simulatedGuestId = 'test-guest-' + Date.now();
+            const log = document.getElementById('simulation-log');
+            log.innerHTML = `
+                <h4>✅ Check-in Complete</h4>
+                <p><strong>Guest ID:</strong> ${simulatedGuestId}</p>
+                <p><strong>Redirect URL:</strong> /check-in/success?guestId=${simulatedGuestId}</p>
+                <p><strong>Status Page:</strong> /status/${simulatedGuestId}</p>
+            `;
+            document.getElementById('simulate-status').disabled = false;
+            addResult(`Guest checked in successfully with ID: ${simulatedGuestId}`, 'success');
+        };
+
+        document.getElementById('simulate-status').onclick = () => {
+            const log = document.getElementById('simulation-log');
+            log.innerHTML += `
+                <h4>📊 Status Page Loaded</h4>
+                <p>Real-time updates would show:</p>
+                <ul>
+                    <li>Queue position: #3</li>
+                    <li>Estimated wait: 30 minutes</li>
+                    <li>Status: Waiting</li>
+                    <li>Notification permission prompt displayed</li>
+                </ul>
+            `;
+            document.getElementById('simulate-next').disabled = false;
+            addResult('Status page simulation complete', 'success');
+        };
+
+        document.getElementById('simulate-next').onclick = () => {
+            const log = document.getElementById('simulation-log');
+            log.innerHTML += `
+                <h4>🔥 You're Next Alert!</h4>
+                <p>Guest would receive:</p>
+                <ul>
+                    <li>✅ Browser notification: "You're Next!"</li>
+                    <li>🔊 Audio alert sound</li>
+                    <li>📱 Visual update: Green "You're Next!" banner</li>
+                    <li>📍 Instruction: "Please head to consultation area"</li>
+                </ul>
+            `;
+            
+            // Trigger actual notification if permission granted
+            if (Notification.permission === 'granted') {
+                new Notification('You\'re Next!', {
+                    body: 'Please head to the consultation area. You\'re next in line!',
+                    icon: '/favicon.ico',
+                    tag: 'next-in-line'
+                });
+            }
+            
+            // Play sound
+            document.getElementById('play-sound').click();
+            
+            addResult('Complete "You\'re Next" experience simulated!', 'success');
+        };
+
+        // Helper function to add results
+        function addResult(message, type) {
+            const results = document.getElementById('test-results');
+            const timestamp = new Date().toLocaleTimeString();
+            const resultClass = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
+            
+            results.innerHTML += `
+                <div class="${resultClass}" style="margin: 5px 0; padding: 10px; border-radius: 5px;">
+                    <strong>[${timestamp}]</strong> ${message}
+                </div>
+            `;
+        }
+
+        // Initialize
+        updatePermissionStatus();
+        addResult('Notification test page loaded', 'info');
+    </script>
+</body>
+</html>

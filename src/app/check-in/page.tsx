@@ -29,7 +29,7 @@ export default function CheckIn() {
     setIsSubmitting(true);
     
     try {
-      await addGuest({
+      const guestId = await addGuest({
         name: formData.name,
         phoneNumber: formData.phoneNumber,
         timeOfArrival: new Date(),
@@ -41,9 +41,9 @@ export default function CheckIn() {
         duration: 4000,
       });
       
-      // Redirect to a success page or back to home
+      // Redirect to success page with guest ID for status tracking
       setTimeout(() => {
-        router.push('/check-in/success');
+        router.push(`/check-in/success?guestId=${guestId}`);
       }, 2000);
       
     } catch (error) {
